@@ -128,7 +128,7 @@ class TwitchData:
                 data[channel] = new_data[channel]
 
         # convert dict to DataFrame
-        data = pd.DataFrame(dict([(x, pd.Series(y)) for x, y in new_data.items()]))
+        data = pd.DataFrame(dict([(x, pd.Series(y)) for x, y in data.items()]))
 
         # save to file
         data.to_csv(self.DATA_DIR, index=False)
