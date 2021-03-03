@@ -17,6 +17,9 @@ def main():
     data.append_data(data.twitch_data)
     print('done')
 
+    # clean_data = data.generate_dict()
+    # overlap_data = data.count_overlap(clean_data)
+    # print(overlap_data)
 
 if __name__ == '__main__':
     main()
