@@ -1,4 +1,5 @@
 # project files
+backups/
 data/
 credentials.py
 .vscode/
