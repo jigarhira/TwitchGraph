@@ -1,4 +1,9 @@
 import itertools
+from networkx.algorithms.components.connected import connected_components, number_connected_components
+from networkx.algorithms.components.weakly_connected import number_weakly_connected_components
+from networkx.classes.function import number_of_edges, number_of_nodes
+from networkx.readwrite import gexf
+from networkx.readwrite.gexf import read_gexf
 import pandas as pd
 import networkx as nx
 
@@ -142,7 +147,8 @@ class TwitchGraph:
 
 
 if __name__ == '__main__':
-    pass
+    # pass
+
 
     # graph = TwitchGraph()
 
@@ -158,4 +164,32 @@ if __name__ == '__main__':
     # graph.save_graph()
     # print('saved graph')
 
-    # graph.plot_graph()
+    # comparing centrality measures and number of viewers 
+    import numpy as np
+    graph = read_gexf(r'./data/twitch_graph.gexf')
+
+    b_nodes = number_of_nodes(graph)
+    nb_arr = number_of_edges(graph)
+    print("Number of nodes : " + str(b_nodes))
+    print("Number of edges : " + str(nb_arr))
+
+    c_pagerank = nx.pagerank(graph)
+    print("Pagerank:    " + str(list(c_pagerank)[:20]))
+
+    c_closeness = nx.closeness_centrality(graph)
+    print("Closeness:   " + str(list(c_closeness)[:20]))
+
+    c_degree = nx.degree_centrality(graph)
+    print("Degree:      " + str(list(c_degree)[:20]))
+
+    c_eigenvector = nx.eigenvector_centrality(graph)
+    print("Eigenvector: " + str(list(c_eigenvector)[:20]))
+
+    c_betweenness = nx.betweenness_centrality(graph)
+    print("Betweenness: " + str(list(c_betweenness)[:20]))
+
+    graph = TwitchGraph()
+    graph.load_csv_data()
+    graph_sorted = sorted(graph.raw_data, key= lambda k: len(graph.raw_data[k]), reverse=True)
+    print("Num Viewers:   " + str((graph_sorted[:20])))
+    
