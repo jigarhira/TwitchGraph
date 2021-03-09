@@ -35,8 +35,8 @@ class TwitchGraph:
 
         self.raw_data = raw_data
 
-    def generate_graph(self) -> None:
-        """Generates graph from raw Twitch data.
+    def generate_multigraph(self) -> None:
+        """Generates multigraph from raw Twitch data.
         """
         # create MultiGraph
         G = nx.MultiGraph()
@@ -61,7 +61,45 @@ class TwitchGraph:
             
             pair_count += 1
             if pair_count % 100 == 0:
-                print('added edges for pairing ' + str(pair_count) + '/' + str(total_pairs))
+                print('added edges for pairing {}/{} ({:.1f}%)'.format(
+                    pair_count,
+                    total_pairs,
+                    100*pair_count/total_pairs
+                ))
+
+        self.G = G
+
+    def generate_graph(self) -> None:
+        """Generates graph from raw Twitch data.
+        """
+        # create MultiGraph
+        G = nx.Graph()
+
+        # add channels as nodes to graph
+        print('found ' + str(len(self.raw_data.keys())) + ' channels')
+        for channel in self.raw_data:
+            G.add_node(channel, viewers=len(self.raw_data[channel]))
+
+        # add edges to graph
+        pair_count = 0
+        pairs = itertools.combinations(self.raw_data, 2)
+        total_pairs = int(len(self.raw_data) * (len(self.raw_data) - 1) / 2)
+        print('generated ' + str(total_pairs) + ' channel pairs')
+        # iterate through channel pairs
+        for ch1, ch2 in pairs:                   
+            # get the number of common users in both channels
+            common_users = len(set(self.raw_data[ch1]).intersection(self.raw_data[ch2]))
+            # add each edge with weight to graph
+            if common_users > 0:
+                G.add_edge(ch1, ch2, weight=common_users)            
+            
+            pair_count += 1
+            if pair_count % 100 == 0:
+                print('added edges for pairing {}/{} ({:.1f}%)'.format(
+                    pair_count,
+                    total_pairs,
+                    100*pair_count/total_pairs
+                ))
 
         self.G = G
 
